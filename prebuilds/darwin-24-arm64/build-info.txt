@@ -1,0 +1,5 @@
+v24.22.2
+cmake version 4.4.5
+Apple clang version 17.0.0 (clang-1700.0.13.5)
+Darwin sat12-dp154-dd0a4ee8-68bd-4b5c-aa1b-c7b464529b00-9A15C85E6C94.local 24.6.0 Darwin Kernel Version 24.6.0: Sun Oct 11 23:44:11 PDT 2026; root:xnu-11417.140.69.713.47~2/RELEASE_ARM64_VMAPPLE arm64
+3e05b66a105041b4fcb93f738fab404d2ec183ec
