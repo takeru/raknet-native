@@ -32,7 +32,7 @@ async function runChecks () {
     cp.execSync('git submodule update', { stdio: 'inherit' })
 
     if (!fs.existsSync('./raknet/Source')) { // npm install does not clone submodules...
-      cp.execSync('git clone https://github.com/extremeheat/fb-raknet raknet') // so do it manually
+      cp.execSync('git clone --branch mineflayer-bedrock https://github.com/takeru/fb-raknet raknet') // the fork carries the arm64 fix // so do it manually
 
       if (!fs.existsSync('./raknet/Source')) { // give up
         console.error('******************* READ ME ****************\n')

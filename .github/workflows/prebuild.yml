@@ -1,5 +1,5 @@
-# Builds node-raknet.node from this branch's sources (including the vendored
-# raknet/ with the arm64 fix) for the platforms mineflayer-bedrock supports,
+# Builds node-raknet.node from this branch's sources (including the raknet/
+# submodule, takeru/fb-raknet with the arm64 fix) for the platforms mineflayer-bedrock supports,
 # and uploads each as an artifact named prebuild-<platform string>.
 # The binaries are then committed under prebuilds/ by hand (see README-fork.md).
 name: prebuild
@@ -23,6 +23,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: true # raknet/ = takeru/fb-raknet (with the arm64 fix)
       - uses: actions/setup-node@v4
         with:
           node-version: 24

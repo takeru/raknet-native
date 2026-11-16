@@ -1,0 +1,4 @@
+[submodule "raknet"]
+	path = raknet
+	url = https://github.com/takeru/fb-raknet.git
+	branch = mineflayer-bedrock
