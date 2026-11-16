@@ -26,7 +26,8 @@ for (const importPath of pathsToSearch) {
 }
 
 // We want to use the built release if available
-if (!bindings || fs.existsSync('./build/Release')) {
+// The package's own build dir, not one under the process CWD.
+if (!bindings || fs.existsSync(require('path').join(__dirname, 'build', 'Release'))) {
   bindings = require('bindings')('node-raknet.node')
 }
 

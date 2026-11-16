@@ -1,0 +1,45 @@
+# Builds node-raknet.node from this branch's sources (including the vendored
+# raknet/ with the arm64 fix) for the platforms mineflayer-bedrock supports,
+# and uploads each as an artifact named prebuild-<platform string>.
+# The binaries are then committed under prebuilds/ by hand (see README-fork.md).
+name: prebuild
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [mineflayer-bedrock]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04 # glibc 2.35, so the binary also loads on newer Linux
+          - os: macos-14 # arm64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm install --ignore-scripts --no-audit --no-fund
+      - run: npx cmake-js compile
+      - name: Smoke-load the built binding
+        run: node -e "const b = require('./build/Release/node-raknet.node'); if (!b.RakClient) throw new Error('no RakClient'); console.log('ok')"
+      - id: plat
+        run: echo "PLATFORM_STRING=$(node -p "require('./helpers/buildPath').getPlatformString()")" >> "$GITHUB_OUTPUT"
+      - name: Record checksum and toolchain
+        run: |
+          shasum -a 256 build/Release/node-raknet.node | tee build/Release/node-raknet.node.sha256
+          { node -v; cmake --version | head -1; c++ --version | head -1; uname -a; git rev-parse HEAD; } | tee build/Release/build-info.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: prebuild-${{ steps.plat.outputs.PLATFORM_STRING }}
+          path: |
+            build/Release/node-raknet.node
+            build/Release/node-raknet.node.sha256
+            build/Release/build-info.txt
