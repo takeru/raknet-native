@@ -91,7 +91,8 @@ bool CCRakNetSlidingWindow::ShouldSendACKs(CCTimeType curTime, CCTimeType estima
 	(void) estimatedTimeToNextTick;
 
 	// iphone crashes on comparison between double and int64 http://www.jenkinssoftware.com/forum/index.php?topic=2717.0
-	if (rto==(CCTimeType) UNSET_TIME_US)
+	// arm64 macOS: clang traps on direct double->uint64 cast of negative value (UB). Go via int64.
+	if (rto==(CCTimeType)(int64_t) UNSET_TIME_US)
 	{
 		// Unknown how long until the remote system will retransmit, so better send right away
 		return true;
@@ -360,7 +361,7 @@ uint64_t CCRakNetSlidingWindow::GetBytesPerSecondLimitByCongestionControl(void) 
 CCTimeType CCRakNetSlidingWindow::GetSenderRTOForACK(void) const
 {
 	if (lastRtt==UNSET_TIME_US)
-		return (CCTimeType) UNSET_TIME_US;
+		return (CCTimeType)(int64_t) UNSET_TIME_US;   // arm64: avoid direct double->uint64 UB cast
 	return (CCTimeType)(lastRtt + SYN);
 }
 // ----------------------------------------------------------------------------------------------------------------------------
